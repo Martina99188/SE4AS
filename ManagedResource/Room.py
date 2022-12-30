@@ -12,10 +12,10 @@ class Room:
 
     def __init__(self, roomName: str):
         roomName = roomName
-        light = randint(0, 255)
-        temperature = randint(15, 30)
-        humidity = randint(0, 100)
-        movement = randint(0, 1)
+        light = 180
+        temperature = 20
+        humidity = 30
+        movement = 0
 
 
     def simulate(self, client: Client):
@@ -24,7 +24,7 @@ class Room:
         self.humidity = self.humidity + randint(-1, 1)
         self.movement = self.movement + randint(-1, 1)
 
-        client.publish(f"indoor/{self.roomName}/light", self.light)
+        client.publish(("indoor/{roomName}/light").format(roomName=self.roomName), self.light)
         client.publish(f"indoor/{self.roomName}/temperature", self.temperature)
         client.publish(f"indoor/{self.roomName}/humidity", self.humidity)
         client.publish(f"indoor/{self.roomName}/movement", self.movement)

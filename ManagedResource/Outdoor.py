@@ -3,15 +3,22 @@ from paho.mqtt.client import Client
 
 
 class Outdoor:
-    @staticmethod
     def simulate(client: Client):
+        light = 0
+        temperature = 0
+        humidity = 0
 
-        light = randint(0, 5)
-        temperature = randint(0, 5)
-        humidity = randint(0, 5)
-        movement = randint(0, 5)
+    def __init__(self):
+        light = 230
+        temperature = 15
+        humidity = 50
 
 
-        client.publish(f"windTurbine/{index}/speed", speed)
-        client.publish(f"windTurbine/{index}/production", production)
-        client.publish(f"windTurbine/{index}/vibration", vibration)
+    def simulate(self, client: Client):
+        self.light = self.light + randint(-1, 1)
+        self.temperature = self.temperature + randint(-1, 1)
+        self.humidity = self.humidity + randint(-1, 1)
+
+        client.publish(f"outdoor/temperature", self.temperature)
+        client.publish(f"outdoor/light", self.light)
+        client.publish(f"outdoor/humidity", self.humidity)

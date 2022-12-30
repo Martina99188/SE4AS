@@ -1,21 +1,25 @@
 import time
 import paho.mqtt.client as mqtt
+from Room import Room
+from Outdoor import Outdoor
 
 def main():
     client = mqtt.Client("ID1")
     client.on_publish = lambda client, userdata, mid: print("PUBLISH: ", mid)
-    client.connect("172.17.0.2")
-    
+    client.connect("localhost")
+
+    living_room = Room(roomName="livingRoom")
+    bath_room = Room(roomName="bathRoom")
+    kitchen = Room(roomName="kitchen")
+    outdoor = Outdoor()
+
     while True:
-        system.publish(client)
+        living_room.simulate(client=client)
+        bath_room.simulate(client=client)
+        kitchen.simulate(client=client)
+        #outdoor.simulate(client=client)
 
-        for index in range(0, 5):
-            SolarPanel.simulate(index, client, system.day, system.weather)
-
-        for index in range(0, 3):
-            WindTurbine.simulate(index, client, system.wind)
-
-        time.sleep(30)
+        time.sleep(10)
 
 
 if __name__ == "__main__":
