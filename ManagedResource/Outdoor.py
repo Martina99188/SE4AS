@@ -9,9 +9,9 @@ class Outdoor:
         humidity = 0
 
     def __init__(self):
-        light = 230
-        temperature = 15
-        humidity = 50
+        self.light = 230
+        self.temperature = 15
+        self.humidity = 50
 
 
     def simulate(self, client: Client):
