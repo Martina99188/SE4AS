@@ -12,8 +12,8 @@ def main():
     # MQTT client creation
     client = mqtt.Client("ManagedResource")
     client.on_publish = lambda client, userdata, mid: print("PUBLISH: ", mid)
-    client.connect("localhost")
-    #client.connect("172.17.0.2")
+    #client.connect("localhost")
+    client.connect("173.20.0.100")
 
     # room creation
     living_room = Room(roomName="livingRoom")
@@ -22,7 +22,16 @@ def main():
     outdoor = Outdoor()
     alarm = Alarm()
 
+    while True:
+        living_room.simulate(client=client)
+        bath_room.simulate(client=client)
+        kitchen.simulate(client=client)
+        outdoor.simulate(client=client)
+
+        time.sleep(10)
+
     # prova attuatori. DA RIMUOVERE una volta implementati i listener
+    """
     living_room.simulate(client=client)
     while True:
         Conditioner.increaseTemperature(room=living_room)
@@ -34,8 +43,7 @@ def main():
         living_room.simulate(client=client)
         print("stato allarme: " + str(alarm.isActive))
         time.sleep(1)
-
-
+    """
 
     while True:
         # actuators listening
