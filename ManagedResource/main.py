@@ -16,9 +16,9 @@ def main():
     client.connect("173.20.0.100")
 
     # room creation
-    living_room = Room(roomName="livingRoom")
-    bath_room = Room(roomName="bathRoom")
-    kitchen = Room(roomName="kitchen")
+    living_room = Room(roomName="livingRoom", light=180, temperature=20, humidity=30, movement=0)
+    bath_room = Room(roomName="bathRoom",  light=140, temperature=22, humidity=40, movement=0)
+    kitchen = Room(roomName="kitchen", light=180, temperature=21, humidity=50, movement=0)
     outdoor = Outdoor()
     alarm = Alarm()
 

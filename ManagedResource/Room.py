@@ -10,12 +10,12 @@ class Room:
     humidity = 0
     movement = 0
 
-    def __init__(self, roomName: str):
+    def __init__(self, roomName: str, light: int, temperature: int, humidity: int, movement: int):
         self.roomName = roomName
-        self.light = 180
-        self.temperature = 20
-        self.humidity = 30
-        self.movement = 0
+        self.light = light
+        self.temperature = temperature
+        self.humidity = humidity
+        self.movement = movement
 
 
     def simulate(self, client: Client):

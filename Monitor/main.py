@@ -10,7 +10,6 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     payload = msg.payload.decode("utf-8")
     print(str(msg.topic + " -> " + payload))
-
     db_storing.dbWrite(str(msg.topic), payload)
 
 if __name__ == '__main__':
