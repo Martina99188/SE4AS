@@ -14,7 +14,15 @@ class db_storing:
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         write_api = client.write_api(write_options=SYNCHRONOUS)
 
+
+
         #data formatting and storing
-        measurement = topic.
-        p = influxdb_client.Point(measurement).
-        write_api.write(bucket=bucket, org=org, record=p )
+        topic = topic.split("/")
+        measurement = topic[0]
+        if measurement == 'indoor':
+            field = topic[1] + "_" + topic[2]
+        else:
+            field = topic[1]
+        p = influxdb_client.Point(measurement).field(field, value)
+        write_api.write(bucket=bucket, org=org, record=p)
+
