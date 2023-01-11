@@ -9,7 +9,9 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     payload = msg.payload.decode("utf-8")
-    topic = str(msg.topic)
+    print(str(msg.topic + " -> " + payload))
+
+    db_storing.dbWrite(msg.topic, payload)
 
 if __name__ == '__main__':
 
@@ -17,6 +19,4 @@ if __name__ == '__main__':
     client.connect("localhost", 1883)
     client.on_connect = on_connect
     client.on_message = on_message
-    db_storing.dbWrite()
-
-
+    client.loop_forever()
