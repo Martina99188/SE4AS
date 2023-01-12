@@ -10,3 +10,4 @@ ip list:
 	- seas_mosquitto: 173.20.0.100
 	- seas_managed_resource: 173.20.0.101
 	- seas_influxdb: 173.20.0.102
+	- seas_monitor: 173.20.0.103
