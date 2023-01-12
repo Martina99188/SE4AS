@@ -1,4 +1,3 @@
-from pydoc import cli
 from db_storing import db_storing
 
 import paho.mqtt.client as mqtt

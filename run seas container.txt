@@ -1,10 +1,10 @@
 creare un docker network tramite
 
-docker network create --subnet=172.20.0.0/16 iot_network
+docker network create --subnet=173.20.0.0/16 iot_network
 
 runnare il container tramite
 
-docker run --network iot_network --ip 172.20.0.100 [-p xxxx:xxxx] -it --name containerName imageNetwork
+docker run --network seas_network --ip 173.20.0.100 [-p xxxx:xxxx] -it --name containerName imageNetwork
 
 ip list:
 	- seas_mosquitto: 173.20.0.100

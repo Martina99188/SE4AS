@@ -7,8 +7,12 @@ from Dehumidifier import Dehumidifier
 from Lamp import Lamp
 from Alarm import Alarm
 from AlarmActuator import AlarmActuator
+from ModeDefinition import ModeDefinition
 
 def main():
+    # mode definition inside the knowledge
+    ModeDefinition.storeModes()
+
     # MQTT client creation
     client = mqtt.Client("ManagedResource")
     client.on_publish = lambda client, userdata, mid: print("PUBLISH: ", mid)
