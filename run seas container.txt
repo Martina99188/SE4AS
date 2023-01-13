@@ -6,6 +6,9 @@ runnare il container tramite
 
 docker run --network seas_network --ip 173.20.0.100 [-p xxxx:xxxx] -it --name containerName imageNetwork
 
+runnare container influxdb:
+docker run -d --network seas_network --ip 173.20.0.102 -p 8086:8086 -it -v C:\Users\miche\data:/var/lib/influxdb2 -v C:\Users\miche\config:/etc/influxdb2 -e DOCKER_INFLUXDB_INIT_MODE=setup -e DOCKER_INFLUXDB_INIT_USERNAME=admin -e DOCKER_INFLUXDB_INIT_PASSWORD=adminadmin -e DOCKER_INFLUXDB_INIT_ORG=univaq -e DOCKER_INFLUXDB_INIT_BUCKET=seas -e DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=seasinfluxdbtoken --name seas_influxdb influxdb
+
 ip list:
 	- seas_mosquitto: 173.20.0.100
 	- seas_managed_resource: 173.20.0.101

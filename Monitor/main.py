@@ -14,7 +14,7 @@ def on_message(client, userdata, msg):
 if __name__ == '__main__':
 
     client = mqtt.Client(client_id="client_id")
-    client.connect("localhost", 1883)
+    client.connect("173.20.0.100", 1883)
     client.on_connect = on_connect
     client.on_message = on_message
     client.loop_forever()
