@@ -2,7 +2,7 @@ import influxdb_client
 
 class LightData:
     @staticmethod
-    def getLightDataFromDB():
+    def getLightDataFromDB(rooms : list):
         # influxdb connection
         org = "univaq"
         token = "seasinfluxdbtoken"

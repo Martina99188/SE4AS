@@ -2,7 +2,7 @@ import influxdb_client
 
 class MovementData:
     @staticmethod
-    def getMovementDataFromDB():
+    def getMovementDataFromDB(rooms : list):
         # influxdb connection
         org = "univaq"
         token = "seasinfluxdbtoken"

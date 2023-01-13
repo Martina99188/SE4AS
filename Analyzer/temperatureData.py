@@ -2,7 +2,7 @@ import influxdb_client
 
 class TemperatureData:
     @staticmethod
-    def getTemperatureDataFromDB():
+    def getTemperatureDataFromDB(rooms : list):
         # influxdb connection
         org = "univaq"
         token = "seasinfluxdbtoken"

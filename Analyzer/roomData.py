@@ -13,7 +13,9 @@ class RoomData:
         query = 'import "influxdata/influxdb/schema" schema.tagValues(bucket: "seas", tag: "room")'
         results = query_api.query(org=org, query=query)
 
+        #put the name of the rooms in a list
         rooms_name = []
-
         for element in results.to_values():
-              print(rooms_name.append(element[3]))
+            rooms_name.append(list(element)[2])
+
+        return rooms_name
