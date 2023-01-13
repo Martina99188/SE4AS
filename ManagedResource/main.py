@@ -17,7 +17,7 @@ def main():
     client = mqtt.Client("ManagedResource")
     client.on_publish = lambda client, userdata, mid: print("PUBLISH: ", mid)
     #client.connect("localhost")
-    client.connect("173.20.0.100")
+    client.connect("localhost")
 
     # room creation
     living_room = Room(roomName="livingRoom", light=180, temperature=20, humidity=30, movement=0)

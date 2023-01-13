@@ -20,7 +20,7 @@ class Room:
 
     def simulate(self, client: Client):
         self.light = self.light + randint(-1, 1)
-        self.temperature = self.temperature # + randint(-1, 1)
+        self.temperature = self.temperature + randint(-1, 1)
         self.humidity = self.humidity + randint(-1, 1)
         self.movement = self.movement + randint(-1, 1)
 
