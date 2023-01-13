@@ -1,36 +1,25 @@
-import movementData
 import pprint
 import numpy
-from lightData import LightData
-from temperatureData import TemperatureData
-from movementData import MovementData
-from humidityData import HumidityData
-from roomData import RoomData
+import db_connector
 
 def main():
-    rooms = RoomData.getRoomsName()
+    con = db_connector.DB_Connector()
+    rooms = con.getRoomNames()
+    measurements = con.getMeasurementsNames('indoor')
     data = {}
 
     #{room : {measurement : {time : value}}}
     for room in rooms:
         room_values = {}
-        # returns {time : value} of the humidity
-        humidity_value = HumidityData.getHumidityDataFromDB(room)
-        room_values['humidity'] = humidity_value
-
-        light_value = LightData.getLightDataFromDB(room)
-        room_values['light'] = light_value
-
-        temperature_value = TemperatureData.getTemperatureDataFromDB(room)
-        room_values['temperature'] = temperature_value
-
-        movement_value = MovementData.getMovementDataFromDB(room)
-        room_values['movement'] = movement_value
+        for measurement in measurements:
+            # returns {time : value} of the measurement
+            value = con.getDataFromDB(room, measurement)
+            room_values[measurement] = value
 
         data[room] = room_values
 
-    # pp = pprint.PrettyPrinter(indent=4)
-    # pp.pprint(data)
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(data)
     check_trend(data)
 
 
