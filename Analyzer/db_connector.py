@@ -7,8 +7,9 @@ class DB_Connector:
     def getRoomNames(self) -> list:
         # influxdb connection
         org = "univaq"
-        token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
-        # url = "http://173.20.0.102:8086/"
+        #token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
+        token = "seasinfluxdbtoken"
+        #url = "http://173.20.0.102:8086/"
         url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
@@ -26,8 +27,9 @@ class DB_Connector:
     def getMeasurementsNames(self, zone: str) -> list:
         # influxdb connection
         org = "univaq"
-        token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
-        # url = "http://173.20.0.102:8086/"
+        #token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
+        token = "seasinfluxdbtoken"
+        #url = "http://173.20.0.102:8086/"
         url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
@@ -45,12 +47,13 @@ class DB_Connector:
     def getDataFromDB(self, room : str, measurement: str):
         # influxdb connection
         org = "univaq"
-        token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
-        # url = "http://173.20.0.102:8086/"
+        #token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
+        token = "seasinfluxdbtoken"
+        #url = "http://173.20.0.102:8086/"
         url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
-        query = f'from(bucket: "seas") |> range(start: -30m)  |> filter(fn: (r) => r["_measurement"] == "indoor")  ' \
+        query = f'from(bucket: "seas") |> range(start: -15m)  |> filter(fn: (r) => r["_measurement"] == "indoor")  ' \
                 f'|> filter(fn: (r) => r["room"] == "{room}")  |> filter(fn: (r) => r["_field"] == "{measurement}")  ' \
                 f'|> yield(name: "last")'
         result = query_api.query(org=org, query=query)
@@ -61,4 +64,6 @@ class DB_Connector:
 
         return values
 
+
+# TODO mettere query fasce orarie generiche per il movimento dell'ultimo mese
 

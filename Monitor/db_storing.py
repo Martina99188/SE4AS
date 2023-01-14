@@ -8,9 +8,9 @@ class db_storing:
         #influxdb connection
         bucket = "seas"
         org = "univaq"
-        token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
+        token = "seasinfluxdbtoken"
         #url = "http://localhost:8086/"
-        url = "http://localhost:8086/"
+        url = "http://173.20.0.102:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         write_api = client.write_api(write_options=SYNCHRONOUS)
 
