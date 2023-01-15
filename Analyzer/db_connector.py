@@ -1,5 +1,5 @@
+import pprint
 import influxdb_client
-
 import json
 
 class DB_Connector:
@@ -25,6 +25,7 @@ class DB_Connector:
 
 
     def getMeasurementsNames(self, zone: str) -> list:
+        """
         # influxdb connection
         org = "univaq"
         #token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
@@ -41,10 +42,11 @@ class DB_Connector:
         measurements_name = []
         for element in results.to_values():
             measurements_name.append(list(element)[2])
+        """
+        measurements = ["humidity","temperature","light"]
+        return measurements
 
-        return measurements_name
-
-    def getDataFromDB(self, room : str, measurement: str):
+    def getParametersDataFromDB(self, room : str, measurement):
         # influxdb connection
         org = "univaq"
         #token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
@@ -53,7 +55,7 @@ class DB_Connector:
         url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
-        query = f'from(bucket: "seas") |> range(start: -15m)  |> filter(fn: (r) => r["_measurement"] == "indoor")  ' \
+        query = f'from(bucket: "seas") |> range(start: -5m)  |> filter(fn: (r) => r["_measurement"] == "indoor")  ' \
                 f'|> filter(fn: (r) => r["room"] == "{room}")  |> filter(fn: (r) => r["_field"] == "{measurement}")  ' \
                 f'|> yield(name: "last")'
         result = query_api.query(org=org, query=query)
@@ -65,5 +67,29 @@ class DB_Connector:
         return values
 
 
-# TODO mettere query fasce orarie generiche per il movimento dell'ultimo mese
+    # TODO mettere query fasce orarie generiche per il movimento dell'ultimo mese
+    def getPresenceDataFromDB(self, room: str, measurement: str):
+        pass
 
+
+    def getTargetRoomParameter(self, room : str, measurement : str):
+        pass
+
+    def getRangeRoom(room : str):
+        # influxdb connection
+        org = "univaq"
+        # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
+        token = "seasinfluxdbtoken"
+        # url = "http://173.20.0.102:8086/"
+        url = "http://localhost:8086/"
+        client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
+        query_api = client.query_api()
+        query = f'from(bucket: "seas")  |> range(start: 2023-01-01T15:00:00Z)  ' \
+                f'|> filter(fn: (r) => r["_measurement"] == "indoor")  |> filter(fn: (r) => r["room"] == "{room}")  ' \
+                f'|> filter(fn: (r) => r["_field"] == "range")  |> yield(name: "last")'
+        result = query_api.query(org=org, query=query)
+
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(result.to_json())
+
+        # TODO FARE QUERY PER PESCARA L'ULTIMO VALORE DI RANGE!!!!!!

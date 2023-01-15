@@ -10,9 +10,6 @@ from AlarmActuator import AlarmActuator
 from ModeDefinition import ModeDefinition
 
 def main():
-    # mode definition inside the knowledge
-    ModeDefinition.storeModes()
-
     # MQTT client creation
     client = mqtt.Client("ManagedResource")
     client.on_publish = lambda client, userdata, mid: print("PUBLISH: ", mid)
@@ -20,9 +17,17 @@ def main():
     client.connect("173.20.0.100")
 
     # room creation
+    rooms = []
     living_room = Room(roomName="livingRoom", light=180, temperature=20, humidity=30, movement=0)
+    rooms.append(living_room)
     bath_room = Room(roomName="bathRoom",  light=140, temperature=22, humidity=40, movement=0)
+    rooms.append(bath_room)
     kitchen = Room(roomName="kitchen", light=180, temperature=21, humidity=50, movement=0)
+    rooms.append(kitchen)
+
+    # mode definition inside the knowledge and mode assignment to the rooms
+    ModeDefinition.storeModes(rooms)
+
     outdoor = Outdoor()
     alarm = Alarm()
 
