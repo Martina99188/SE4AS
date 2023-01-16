@@ -1,5 +1,6 @@
 import pprint
 import influxdb_client
+from influxdb_client.client.write_api import SYNCHRONOUS
 import json
 
 class DB_Connector:
@@ -9,8 +10,8 @@ class DB_Connector:
         org = "univaq"
         #token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
         token = "seasinfluxdbtoken"
-        #url = "http://173.20.0.102:8086/"
-        url = "http://localhost:8086/"
+        url = "http://173.20.0.102:8086/"
+        #url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
         query = f'import "influxdata/influxdb/schema" schema.tagValues(bucket: "seas", tag: "room")'
@@ -51,8 +52,8 @@ class DB_Connector:
         org = "univaq"
         #token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
         token = "seasinfluxdbtoken"
-        #url = "http://173.20.0.102:8086/"
-        url = "http://localhost:8086/"
+        url = "http://173.20.0.102:8086/"
+        #url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
         query = f'from(bucket: "seas") |> range(start: -5m)  |> filter(fn: (r) => r["_measurement"] == "indoor")  ' \
@@ -63,33 +64,78 @@ class DB_Connector:
         values = {}
         for value in json.loads(result.to_json()):
             values[value['_time']] = value['_value']
-
         return values
 
 
-    # TODO mettere query fasce orarie generiche per il movimento dell'ultimo mese
-    def getPresenceDataFromDB(self, room: str, measurement: str):
-        pass
+    #def getPresenceDataFromDB(self, room: str, start:any, stop: any()):
+    def getPresenceDataFromDB(room: str):
+        # influxdb connection
+        org = "univaq"
+        # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
+        token = "seasinfluxdbtoken"
+        url = "http://173.20.0.102:8086/"
+        #url = "http://localhost:8086/"
+        client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
+        query_api = client.query_api()
+        query = f'from(bucket: "seas")  |> range(start: -7d)  ' \
+                f'|> filter(fn: (r) => r["_measurement"] == "indoor")  ' \
+                f'|> filter(fn: (r) => r["room"] == "{room}")  ' \
+                f'|> filter(fn: (r) => r["_field"] == "movement")  |> yield(name: "mean")'
+        result = query_api.query(org=org, query=query)
+        values = {}
+        for value in json.loads(result.to_json()):
+            values[value['_time']] = value['_value']
+        return values
 
 
-    def getTargetRoomParameter(self, room : str, measurement : str):
-        pass
+    def getTargetRoomParameter(measurement : str):
+        # influxdb connection
+        org = "univaq"
+        # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
+        token = "seasinfluxdbtoken"
+        url = "http://173.20.0.102:8086/"
+        #url = "http://localhost:8086/"
+        client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
+        query_api = client.query_api()
+        query = f'from(bucket: "seas")  |> range(start: 2023-01-01T15:00:00Z)  ' \
+                f'|> filter(fn: (r) => r["_measurement"] == "target")  ' \
+                f'|> filter(fn: (r) => r["_field"] == "{measurement}")  ' \
+                f'|> last(column: "_field")  |> yield(name: "last")'
+        result = query_api.query(org=org, query=query)
+        result = json.loads(result.to_json())[0]['_value']
+        return result
 
     def getRangeRoom(room : str):
         # influxdb connection
         org = "univaq"
         # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
         token = "seasinfluxdbtoken"
-        # url = "http://173.20.0.102:8086/"
-        url = "http://localhost:8086/"
+        url = "http://173.20.0.102:8086/"
+        #url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
         query = f'from(bucket: "seas")  |> range(start: 2023-01-01T15:00:00Z)  ' \
                 f'|> filter(fn: (r) => r["_measurement"] == "indoor")  |> filter(fn: (r) => r["room"] == "{room}")  ' \
-                f'|> filter(fn: (r) => r["_field"] == "range")  |> yield(name: "last")'
+                f'|> filter(fn: (r) => r["_field"] == "range")  |> last(column: "_field")  ' \
+                f'|> yield(name: "mean")'
         result = query_api.query(org=org, query=query)
+        result = json.loads(result.to_json())[0]['_value']
+        return result
 
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(result.to_json())
+    def storeTimeSlots(timeSlot : tuple):
+        # influxdb connection
+        bucket = "seas"
+        org = "univaq"
+        token = "seasinfluxdbtoken"
+        #url = "http://localhost:8086/"
+        url = "http://173.20.0.102:8086/"
+        client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
+        write_api = client.write_api(write_options=SYNCHRONOUS)
 
-        # TODO FARE QUERY PER PESCARA L'ULTIMO VALORE DI RANGE!!!!!!
+        measurement = "timeSlot"
+        field = timeSlot[0]
+        value = timeSlot[1]
+        p = influxdb_client.Point(measurement).field(field, int(value))
+        write_api.write(bucket=bucket, org=org, record=p)
+
+

@@ -1,7 +1,11 @@
 import pprint
+from datetime import datetime
+from time import sleep
+
 import numpy
 import numpy as np
 import db_connector
+import requests
 
 def main():
     con = db_connector.DB_Connector()
@@ -18,38 +22,41 @@ def main():
             room_values[measurement] = value
 
         parameters_data[room] = room_values
-    #pp = pprint.PrettyPrinter(indent=4)
-    #pp.pprint(data)
-    check_parameters_symptoms(parameters_data)
 
 
-    """
-    check if our measured parameter are rising or falling
-    trends = check_trend(data)
-    print("i trend sono:")
-    print(trends)
+    symptoms = check_parameters_symptoms(parameters_data)
+    url = 'http://173.20.0.105:5005/planner/symptoms'
+    x = requests.post(url, json=symptoms)
+    print(x.text)
 
-    presence = check_busy_time_slot(data)
-    print("presenza persone in fasce orarie: ")
-    print(presence)
-    """
+    # blocco dedicato alla profilazione della presenza di persone in casa
+    timeSlots = check_busy_time_slot()
+
+    for timeSlot in timeSlots.items():
+        db_connector.DB_Connector.storeTimeSlots(timeSlot)
 
 # calulate the mean of the last 5 minutes for each measured parameter (except the movement) and finds the symptoms
 def check_parameters_symptoms(data):
     rooms = {}
     for room in data:
         values = {}
+        interval = db_connector.DB_Connector.getRangeRoom(room=room)
         for measurement in data[room]:
             if measurement != "movement":
-                range = db_connector.DB_Connector.getRangeRoom(room = room)
-                print(range)
-
-                # al posto della media mettere stringa che dice se siamo sopra o sotto il range
+                target = db_connector.DB_Connector.getTargetRoomParameter(measurement=measurement)
                 mean_parameter = numpy.mean(list(data[room][measurement].values()))
-                values[measurement] = mean_parameter
+
+                # 1 IF WE ARE OVER THE RANGE
+                # 0 IF WE ARE INSIDE THE RANGE
+                # -1 IF WE ARE UNDER THE RANGE
+                if mean_parameter < target - interval:
+                    values[measurement] = -1
+                elif mean_parameter > target + interval:
+                    values[measurement] = 1
+                else:
+                    values[measurement] = 0
         rooms[room] = values
-
-
+    return rooms
 
 
 def check_trend(data):
@@ -81,22 +88,44 @@ def check_trend(data):
     #print(trends)
     return trends
 
-def check_busy_time_slot(data):
-    # TODO prendere media del movement per ogni quarto d'ora e vedere fasce orarie "affollate"
-    presence = []
-    for room in data:
-        for measurement in data[room]:
-            if measurement == "movement":
-                #print(data[room][measurement])
-                for element in data[room][measurement]:
-                    # vedere come dividere i vari elementi per ogni quarto d'ora
-                    #print(element)
-                    continue
+def check_busy_time_slot():
+    con = db_connector.DB_Connector()
+    rooms = con.getRoomNames()
+    datas = []
+    for room in rooms:
+        data = db_connector.DB_Connector.getPresenceDataFromDB(room)
+        for element in data.items():
+            datas.append(element)
+
+    parsed_time = dict()
+    for element in datas:
+        time_string = element[0].split('T')
+        time_string = time_string[1]
+        time_string = time_string.split('.')
+        time_string = time_string[0]
+
+        date_obj = datetime.strptime(time_string, '%H:%M:%S')
+        parsed_time[str(date_obj.time())] = element[1]
+
+    fasce_orarie = dict()
+    for hour in range(0, 24):
+        for quarter in [('00', '14'), ('15', '29'), ('30', '44'), ('45', '59')]:
+            parsed = list()
+            for record in parsed_time.items():
+                date_obj = datetime.strptime(record[0], '%H:%M:%S')
+                if date_obj.hour == hour and (date_obj.minute > int(quarter[0]) and date_obj.minute < int(quarter[1])):
+                    parsed.append(record[1])
+                else:
+                    parsed.append(0)
+            mean = numpy.mean(parsed)
+            if mean >= 0.5:
+                fasce_orarie[f'{hour}:{quarter[0]} - {hour}:{quarter[1]}'] = 1
             else:
-                continue
-    # presence restituisce in base alla fascia orario la media di quanto è affollata una stanza ( 0 o 1 )
-    return presence
+                fasce_orarie[f'{hour}:{quarter[0]} - {hour}:{quarter[1]}'] = 0
+    return fasce_orarie
 
-
+# TODO cambiare lo sleep con valore 300
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
+        sleep(20)
