@@ -1,0 +1,96 @@
+version: "3.9"
+services:
+  seas_managed_resource:
+    image: seas_managed_resource
+    container_name: seas_managed_resource
+    build:
+      context: ./ManagedResource/
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.101
+    depends_on:
+      - seas_mosquitto
+      - seas_influxdb
+
+  seas_monitor:
+    image: seas_monitor
+    container_name: MAPE_MONITOR
+    build:
+      context: ./Monitor/
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.103
+    depends_on:
+      - seas_mosquitto
+      - seas_managed_resource
+      - seas_influxdb
+
+  seas_analyzer:
+    image: seas_analyzer
+    container_name: MAPE_ANALYZER
+    build:
+      context: ./Analyzer/
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.104
+    depends_on:
+      - seas_mosquitto
+      - seas_influxdb
+      - seas_planner
+
+  seas_planner:
+    image: seas_planner
+    container_name: MAPE_PLANNER
+    build:
+      context: ./Planner/
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.105
+    depends_on:
+      - seas_mosquitto
+
+  seas_mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto_container
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+    restart: always
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.100
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+
+  seas_influxdb:
+    image: influxdb:latest
+    container_name: KNOWLEDGE
+    restart: always
+    environment:
+              # Use these same configurations parameters in your telegraf configuration, mytelegraf.conf.
+              - DOCKER_INFLUXDB_INIT_MODE=setup
+              - DOCKER_INFLUXDB_INIT_USERNAME=admin
+              - DOCKER_INFLUXDB_INIT_PASSWORD=adminadmin
+              - DOCKER_INFLUXDB_INIT_ORG=univaq
+              - DOCKER_INFLUXDB_INIT_BUCKET=seas
+              - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=seasinfluxdbtoken
+    networks:
+       seas_network:
+          ipv4_address: 173.20.0.102
+    ports:
+      - "8086:8086"
+
+networks:
+  seas_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: "173.20.0.0/16"
