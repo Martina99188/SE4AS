@@ -3,19 +3,30 @@ import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
 import json
 
+from tenacity import retry, stop_after_attempt
+
+
 class DB_Connector:
 
+    def __init__(self):
+
+        self.org = "univaq"
+        # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
+        self.token = "seasinfluxdbtoken"
+        # url = "http://173.20.0.102:8086/"
+        self.url = "http://localhost:8086/"
+        self.connect_to_influx()
+
+    @retry()
+    def connect_to_influx(self):
+        self.client = influxdb_client.InfluxDBClient(url=self.url, token=self.token, org=self.org)
+
+    @retry()
     def getRoomNames(self) -> list:
         # influxdb connection
-        org = "univaq"
-        #token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
-        token = "seasinfluxdbtoken"
-        url = "http://173.20.0.102:8086/"
-        #url = "http://localhost:8086/"
-        client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
-        query_api = client.query_api()
+        query_api = self.client.query_api()
         query = f'import "influxdata/influxdb/schema" schema.tagValues(bucket: "seas", tag: "room")'
-        results = query_api.query(org=org, query=query)
+        results = query_api.query(org=self.org, query=query)
 
         # put the name of the rooms in a list
         rooms_name = []
@@ -24,42 +35,17 @@ class DB_Connector:
 
         return rooms_name
 
-
     def getMeasurementsNames(self, zone: str) -> list:
-        """
-        # influxdb connection
-        org = "univaq"
-        #token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
-        token = "seasinfluxdbtoken"
-        #url = "http://173.20.0.102:8086/"
-        url = "http://localhost:8086/"
-        client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
-        query_api = client.query_api()
-        query = f'import "influxdata/influxdb/schema" \
-                schema.measurementFieldKeys(bucket: "seas", measurement: "{zone}")'
-        results = query_api.query(org=org, query=query)
-
-        # put the name of the rooms in a list
-        measurements_name = []
-        for element in results.to_values():
-            measurements_name.append(list(element)[2])
-        """
         measurements = ["humidity","temperature","light"]
         return measurements
 
+    @retry()
     def getParametersDataFromDB(self, room : str, measurement):
-        # influxdb connection
-        org = "univaq"
-        #token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
-        token = "seasinfluxdbtoken"
-        url = "http://173.20.0.102:8086/"
-        #url = "http://localhost:8086/"
-        client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
-        query_api = client.query_api()
+        query_api = self.client.query_api()
         query = f'from(bucket: "seas") |> range(start: -5m)  |> filter(fn: (r) => r["_measurement"] == "indoor")  ' \
                 f'|> filter(fn: (r) => r["room"] == "{room}")  |> filter(fn: (r) => r["_field"] == "{measurement}")  ' \
                 f'|> yield(name: "last")'
-        result = query_api.query(org=org, query=query)
+        result = query_api.query(org=self.org, query=query)
 
         values = {}
         for value in json.loads(result.to_json()):
@@ -68,13 +54,14 @@ class DB_Connector:
 
 
     #def getPresenceDataFromDB(self, room: str, start:any, stop: any()):
+    @retry()
     def getPresenceDataFromDB(room: str):
         # influxdb connection
         org = "univaq"
         # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
         token = "seasinfluxdbtoken"
-        url = "http://173.20.0.102:8086/"
-        #url = "http://localhost:8086/"
+        #url = "http://173.20.0.102:8086/"
+        url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
         query = f'from(bucket: "seas")  |> range(start: -7d)  ' \
@@ -87,14 +74,14 @@ class DB_Connector:
             values[value['_time']] = value['_value']
         return values
 
-
+    @retry()
     def getTargetRoomParameter(measurement : str):
         # influxdb connection
         org = "univaq"
         # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
         token = "seasinfluxdbtoken"
-        url = "http://173.20.0.102:8086/"
-        #url = "http://localhost:8086/"
+        #url = "http://173.20.0.102:8086/"
+        url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
         query = f'from(bucket: "seas")  |> range(start: 2023-01-01T15:00:00Z)  ' \
@@ -105,13 +92,14 @@ class DB_Connector:
         result = json.loads(result.to_json())[0]['_value']
         return result
 
+    @retry()
     def getRangeRoom(room : str):
         # influxdb connection
         org = "univaq"
         # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
         token = "seasinfluxdbtoken"
-        url = "http://173.20.0.102:8086/"
-        #url = "http://localhost:8086/"
+        #url = "http://173.20.0.102:8086/"
+        url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
         query = f'from(bucket: "seas")  |> range(start: 2023-01-01T15:00:00Z)  ' \
@@ -122,13 +110,46 @@ class DB_Connector:
         result = json.loads(result.to_json())[0]['_value']
         return result
 
+    @retry()
+    def getModeRoom(self, room : str):
+        query_api = self.client.query_api()
+        query = f'from(bucket: "seas") \
+                |> range(start: 2023-01-01T15:00:00Z)\
+                |> filter(fn: (r) => r["_measurement"] == "indoor")\
+                |> filter(fn: (r) => r["room"] == "{room}")\
+                |> filter(fn: (r) => r["_field"] == "mode")\
+                |> last(column: "_field") \
+                |> yield(name: "last")'
+        result = query_api.query(org=self.org, query=query)
+        parsed_result = json.loads(result.to_json())[0]['_value']
+        return parsed_result
+
+    # @retry()
+    def getAllRangesForModes(self):
+        query_api = self.client.query_api()
+        query = f'from(bucket: "seas") \
+                  |> range(start: 2023-01-01T15:00:00Z)\
+                  |> filter(fn: (r) => r["_measurement"] == "mode")\
+                  |> filter(fn: (r) => r["name"] == "danger" or r["name"] == "eco" or r["name"] == "normal")\
+                  |> filter(fn: (r) => r["_field"] == "range")\
+                  |> last(column: "_field")\
+                  |> yield(name: "mean")'
+        result = query_api.query(org=self.org, query=query)
+        values = {}
+        parsed = json.loads(result.to_json())
+        # print(parsed)
+        for obj in parsed:
+            values[obj['name']] = obj['_value']
+
+        return values
+    @retry()
     def storeTimeSlots(timeSlot : tuple):
         # influxdb connection
         bucket = "seas"
         org = "univaq"
         token = "seasinfluxdbtoken"
-        #url = "http://localhost:8086/"
-        url = "http://173.20.0.102:8086/"
+        url = "http://localhost:8086/"
+        #url = "http://173.20.0.102:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         write_api = client.write_api(write_options=SYNCHRONOUS)
 
@@ -138,4 +159,6 @@ class DB_Connector:
         p = influxdb_client.Point(measurement).field(field, int(value))
         write_api.write(bucket=bucket, org=org, record=p)
 
-
+if __name__ == '__main__':
+    con = DB_Connector()
+    DB_Connector().getParametersDataFromDB('kitchen')

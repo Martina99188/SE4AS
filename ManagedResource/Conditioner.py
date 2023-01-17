@@ -1,12 +1,47 @@
-from Room import Room
+from threading import Thread
+
+import paho.mqtt.client as mqtt
+from tenacity import retry
+
 
 class Conditioner:
-    @staticmethod
-    def increaseTemperature(room: Room):
-        # implement here listener from executor
-        room.temperature = room.temperature + 1
 
-    @staticmethod
-    def decreaseTemperature(room: Room):
+    @retry()
+    def __init__(self, room):
+        self.room = room
+        self.client = mqtt.Client(client_id=f"Conditioner_{room.roomName}")
+        self.client.connect("localhost", 1883)
+        self.thread = Thread(target=self.initialize_mqtt)
+        self.thread.start()
+
+    def initialize_mqtt(self):
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
+        self.client.loop_forever()
+
+    def on_connect(self, client, userdata, flags, rc):
+        print(self.thread.is_alive())
+        print("Connection returned result: " + mqtt.connack_string(rc))
+        self.client.subscribe("conditioner/#")
+
+
+    def on_message(self, client, userdata, msg):
+        payload = msg.payload.decode("utf-8")
+        #print("message received")
+        topic = msg.topic
+        topic_split = topic.split('/')
+        room_name = topic_split[1]
+        condition = topic_split[2]
+
+        if room_name == self.room.roomName:
+            if condition == 'up':
+                self.increaseTemperature()
+            else:
+                self.decreaseTemperature()
+    def increaseTemperature(self):
         # implement here listener from executor
-        room.temperature = room.temperature - 1
+        self.room.temperature = self.room.temperature + 1
+
+    def decreaseTemperature(self):
+        # implement here listener from executor
+        self.room.temperature = self.room.temperature - 1

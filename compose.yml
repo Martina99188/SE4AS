@@ -87,6 +87,20 @@ services:
           ipv4_address: 173.20.0.102
     ports:
       - "8086:8086"
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./grafana-storage:/var/lib/grafana
+      - ./Grafana/provisioning/:/etc/grafana/provisioning
+    depends_on:
+      - seas_influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+volumes:
+  grafana-storage:
 
 networks:
   seas_network:
