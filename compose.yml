@@ -89,22 +89,25 @@ services:
       - "8086:8086"
   grafana:
     image: grafana/grafana:latest
-    ports:
-      - '3000:3000'
+    container_name: grafana
     volumes:
-      - ./grafana-storage:/var/lib/grafana
-      - ./Grafana/provisioning/:/etc/grafana/provisioning
-    depends_on:
-      - seas_influxdb
+      - ./grafana:/var/lib/grafana
+      - ./grafana.ini:/etc/grafana/grafana.ini
     environment:
+      - GF_SERVER_ROOT_URL=http://172.20.0.104:3000
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
-volumes:
-  grafana-storage:
-
+    restart: always
+    ports:
+      - '3000:3000'
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.107
+    depends_on:
+      - seas_influxdb
+      
 networks:
   seas_network:
     ipam:
-      driver: default
       config:
         - subnet: "173.20.0.0/16"
