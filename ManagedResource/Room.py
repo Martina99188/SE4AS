@@ -30,14 +30,16 @@ class Room:
 
 
     def simulate(self, client: Client):
-        # rand = random.randint(0,10)
-        # if rand == 0:
-        #     self.light = self.light + randint(-1, 1)
-        #     self.temperature = self.temperature + randint(-1, 1)
-        #     self.humidity = self.humidity + randint(-1, 1)
-        #     self.movement = randint(0,1)
+        rand = random.randint(0,9)
+        if rand == 0:
+             self.light = self.light + randint(-1, 1)
+             self.temperature = self.temperature + randint(-1, 1)
+             self.humidity = self.humidity + randint(-1, 1)
+        self.movement = randint(0,1)
 
         client.publish(f"indoor/{self.roomName}/light", self.light)
         client.publish(f"indoor/{self.roomName}/temperature", self.temperature)
         client.publish(f"indoor/{self.roomName}/humidity", self.humidity)
         client.publish(f"indoor/{self.roomName}/movement", self.movement)
+
+        print(f'Publishing simulated data for room {self.roomName}')

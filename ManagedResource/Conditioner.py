@@ -20,14 +20,11 @@ class Conditioner:
         self.client.loop_forever()
 
     def on_connect(self, client, userdata, flags, rc):
-        print(self.thread.is_alive())
-        print("Connection returned result: " + mqtt.connack_string(rc))
         self.client.subscribe("conditioner/#")
 
 
     def on_message(self, client, userdata, msg):
         payload = msg.payload.decode("utf-8")
-        #print("message received")
         topic = msg.topic
         topic_split = topic.split('/')
         room_name = topic_split[1]

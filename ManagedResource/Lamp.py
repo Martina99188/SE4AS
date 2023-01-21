@@ -19,12 +19,10 @@ class Lamp:
         self.client.loop_forever()
 
     def on_connect(self, client, userdata, flags, rc):
-        # print('Connesso')
         self.client.subscribe("lamp/#")
 
     def on_message(self, client, userdata, msg):
         payload = msg.payload.decode("utf-8")
-        print("message received")
         topic = msg.topic
         topic_split = topic.split('/')
         room_name = topic_split[1]

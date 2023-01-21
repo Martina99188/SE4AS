@@ -4,7 +4,6 @@ import paho.mqtt.client as mqtt
 
 def on_connect(client, userdata, flags, rc):
     client.subscribe("indoor/#")
-    client.subscribe("outdoor/#")
 
 def on_message(client, userdata, msg):
     payload = msg.payload.decode("utf-8")

@@ -17,15 +17,22 @@ def check_symptoms():
     try:
         for room in symptoms:
             for measurement in symptoms[room]:
-                print(f'Room: {room}, Measurement: {measurement}, Condition: {symptoms[room][measurement]}')
+                print(f'\nRoom: {room}, Measurement: {measurement}, Condition: {symptoms[room][measurement]}')
                 new_url = f'{url}/{room}/{measurement}'
                 if symptoms[room][measurement] == 1:
                     x = requests.get(f'{new_url}/down')
+                    print(f'{measurement} symptom: {symptoms[room][measurement]}. {measurement} should decrease.')
                 elif symptoms[room][measurement] == -1:
                     x = requests.get(f'{new_url}/up')
-                elif symptoms[room][measurement] == 2 or measurement == -2:
+                    print(f'{measurement} symptom: {symptoms[room][measurement]}. {measurement} should increase.')
+                elif symptoms[room][measurement] == 2 :
                     alarm_url = f'{url}/{room}/activate/alarm'
                     x = requests.get(alarm_url)
+                    print(f'{measurement} symptom: {symptoms[room][measurement]}. {measurement} should decrease. Alarm should be activated.')
+                elif symptoms[room][measurement] == -2:
+                    alarm_url = f'{url}/{room}/activate/alarm'
+                    x = requests.get(alarm_url)
+                    print(f'{measurement} symptom: {symptoms[room][measurement]}. {measurement} should increase. Alarm should be activated.')
 
     except Exception as exc:
         print(exc)
