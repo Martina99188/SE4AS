@@ -17,12 +17,14 @@ def main():
         rooms = con.getRoomNames()
         measurements = con.getMeasurementsNames('indoor')
         parameters_data = {}
+        presence_data = {}
 
         for room in rooms:
             timeSlots = check_busy_time_slot(room)
             for timeSlot in timeSlots.items():
                 #print(f'{room} - {timeSlot}')
                 db_connector.DB_Connector.storeTimeSlots(timeSlot, room)
+            presence_data [room] = check_presence(room)
 
         # dictionary of data are organized in this way {room : {measurement : {time : value}}}
         for room in rooms:
@@ -199,7 +201,21 @@ def check_busy_time_slot(room):
     print(fasce_orarie)
     return fasce_orarie
 
+def check_presence(room:str):
+    now = datetime.now()
+    current_time = now.strftime("%H:%M").split(":")
+    for quarter in [('00', '14'), ('15', '29'), ('30', '44'), ('45', '59')]:
+        if current_time[1] >= quarter[0] and current_time[1] <= quarter[1]:
+
+            time_slot = f'{current_time[0]}:{quarter[0]} - {current_time[0]}:{quarter[1]}'
+            print(time_slot)
+            #data = db_connector.DB_Connector.getPresenceDataFromDB(room, time_slot)
+
+
 if __name__ == "__main__":
+    """
     while True:
         main()
         sleep(10)
+    """
+    check_presence("livingRoom")
