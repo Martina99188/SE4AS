@@ -1,6 +1,6 @@
 import pprint
 from datetime import datetime
-from time import sleep
+from time import sleep, time
 
 import numpy
 import numpy as np
@@ -24,7 +24,12 @@ def main():
             for timeSlot in timeSlots.items():
                 #print(f'{room} - {timeSlot}')
                 db_connector.DB_Connector.storeTimeSlots(timeSlot, room)
-            presence_data [room] = check_presence(room)
+            presence = check_presence(room)
+            if presence != 0:
+                presence_data[room] = presence
+
+        url = 'http://localhost:5005/planner/presence'
+        x = requests.post(url, json=presence_data)
 
         # dictionary of data are organized in this way {room : {measurement : {time : value}}}
         for room in rooms:
@@ -59,7 +64,6 @@ def check_parameters_symptoms(data):
     for room in data:
         values = {}
         interval = db_connector.DB_Connector.getRangeRoom(room=room)
-        con = db_connector.DB_Connector()
         mode = con.getModeRoom(room)
         for measurement in data[room]:
             if measurement != "movement":
@@ -194,28 +198,38 @@ def check_busy_time_slot(room):
                     parsed.append(0)
             mean = numpy.mean(parsed)
             if mean >= 0.5:
-                print(f'{hour}:{quarter[0]} - {hour}:{quarter[1]}')
+                # print(f'{hour}:{quarter[0]} - {hour}:{quarter[1]}')
                 fasce_orarie[f'{hour}:{quarter[0]} - {hour}:{quarter[1]}'] = 1
             else:
                 fasce_orarie[f'{hour}:{quarter[0]} - {hour}:{quarter[1]}'] = 0
-    print(fasce_orarie)
+    # print(fasce_orarie)
     return fasce_orarie
 
 def check_presence(room:str):
-    now = datetime.now()
-    current_time = now.strftime("%H:%M").split(":")
+    con = db_connector.DB_Connector()
+    mode = con.getModeRoom(room)
+    utcnow = datetime.utcnow()
+    current_time = utcnow.strftime("%H:%M").split(":")
     for quarter in [('00', '14'), ('15', '29'), ('30', '44'), ('45', '59')]:
         if current_time[1] >= quarter[0] and current_time[1] <= quarter[1]:
 
             time_slot = f'{current_time[0]}:{quarter[0]} - {current_time[0]}:{quarter[1]}'
-            print(time_slot)
-            #data = db_connector.DB_Connector.getPresenceDataFromDB(room, time_slot)
+
+            value = con.get_room_time_slots(room, time_slot)
+
+            if mode == 'normal' and value == 0:
+                return 1
+            if mode == 'eco' and value == 1:
+                return 2
+
+            return 0
+
 
 
 if __name__ == "__main__":
-    """
+
     while True:
         main()
         sleep(10)
-    """
-    check_presence("livingRoom")
+
+    #check_presence("livingRoom")

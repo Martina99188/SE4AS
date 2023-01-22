@@ -52,7 +52,7 @@ class DB_Connector:
             values[value['_time']] = value['_value']
         return values
 
-    @retry()
+    #@retry()
     def getPresenceDataFromDB(room: str):
         # influxdb connection
         org = "univaq"
@@ -159,15 +159,17 @@ class DB_Connector:
         p = influxdb_client.Point(measurement).tag('room', tag).field(field, int(value))
         write_api.write(bucket=bucket, org=org, record=p)
 
-    @retry()
-    def get_room_time_slots(self, room:str):
+    #@retry()
+    def get_room_time_slots(self, room : str, timeslot : str):
         query_api = self.client.query_api()
         query = f'from(bucket: "seas")  |> range(start: -7d)  ' \
                 f'|> filter(fn: (r) => r["_measurement"] == "timeSlot")  ' \
                 f'|> filter(fn: (r) => r["room"] == "{room}")  ' \
-                f'|> filter(fn: (r) => r["_field"] == "15:00 - 15:14")  ' \
+                f'|> filter(fn: (r) => r["_field"] == "{timeslot}")  ' \
                 f'|> last(column: "_field")  |> yield(name: "mean")'
         result = query_api.query(org=self.org, query=query)
+        parsed = json.loads(result.to_json())
+        return parsed[0]['_value']
 
 
 

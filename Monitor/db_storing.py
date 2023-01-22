@@ -7,7 +7,7 @@ from tenacity import retry
 
 class db_storing:
     @staticmethod
-    @retry()
+    #@retry()
     def dbWrite(topic : str, value: int):
         #influxdb connection
         bucket = "seas"
@@ -15,7 +15,7 @@ class db_storing:
         token = "seasinfluxdbtoken"
         #url = "http://localhost:8086/"
         url = "http://localhost:8086/"
-        client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
+        client = influxdb_client.InfluxDBClient(url=url, token=token, org=org, debug=True)
         write_api = client.write_api(write_options=SYNCHRONOUS)
 
         #data formatting and storing
