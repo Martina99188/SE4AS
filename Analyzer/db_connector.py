@@ -143,7 +143,7 @@ class DB_Connector:
 
         return values
     @retry()
-    def storeTimeSlots(timeSlot : tuple):
+    def storeTimeSlots(timeSlot : tuple, room : str):
         # influxdb connection
         bucket = "seas"
         org = "univaq"
@@ -154,9 +154,11 @@ class DB_Connector:
         write_api = client.write_api(write_options=SYNCHRONOUS)
 
         measurement = "timeSlot"
+        tag = room
         field = timeSlot[0]
         value = timeSlot[1]
-        p = influxdb_client.Point(measurement).field(field, int(value))
+        #print(f'Field: {field} - Value: {int(value)}')
+        p = influxdb_client.Point(measurement).tag('room', tag).field(field, int(value))
         write_api.write(bucket=bucket, org=org, record=p)
 
 if __name__ == '__main__':

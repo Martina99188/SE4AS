@@ -18,6 +18,12 @@ def main():
         measurements = con.getMeasurementsNames('indoor')
         parameters_data = {}
 
+        for room in rooms:
+            timeSlots = check_busy_time_slot(room)
+            for timeSlot in timeSlots.items():
+                #print(f'{room} - {timeSlot}')
+                db_connector.DB_Connector.storeTimeSlots(timeSlot, room)
+
         # dictionary of data are organized in this way {room : {measurement : {time : value}}}
         for room in rooms:
             room_values = {}
@@ -31,14 +37,15 @@ def main():
         symptoms = check_parameters_symptoms(parameters_data)
         url = 'http://localhost:5005/planner/symptoms'
         x = requests.post(url, json=symptoms)
+
+        # blocco dedicato alla profilazione della presenza di persone in casa
+
+
     except Exception as exc:
         print(exc)
 
-    # blocco dedicato alla profilazione della presenza di persone in casa
-    timeSlots = check_busy_time_slot()
 
-    for timeSlot in timeSlots.items():
-        db_connector.DB_Connector.storeTimeSlots(timeSlot)
+
 
 
 # calulate the mean of the last 5 minutes for each measured parameter (except the movement) and finds the symptoms
@@ -155,14 +162,13 @@ def check_parameters_symptoms(data):
 
 
 @retry()
-def check_busy_time_slot():
+def check_busy_time_slot(room):
     con = db_connector.DB_Connector()
     rooms = con.getRoomNames()
     datas = []
-    for room in rooms:
-        data = db_connector.DB_Connector.getPresenceDataFromDB(room)
-        for element in data.items():
-            datas.append(element)
+    data = db_connector.DB_Connector.getPresenceDataFromDB(room)
+    for element in data.items():
+        datas.append(element)
 
     parsed_time = dict()
     for element in datas:
@@ -186,12 +192,14 @@ def check_busy_time_slot():
                     parsed.append(0)
             mean = numpy.mean(parsed)
             if mean >= 0.5:
+                print(f'{hour}:{quarter[0]} - {hour}:{quarter[1]}')
                 fasce_orarie[f'{hour}:{quarter[0]} - {hour}:{quarter[1]}'] = 1
             else:
                 fasce_orarie[f'{hour}:{quarter[0]} - {hour}:{quarter[1]}'] = 0
+    print(fasce_orarie)
     return fasce_orarie
 
 if __name__ == "__main__":
     while True:
         main()
-        sleep(1)
+        sleep(10)
