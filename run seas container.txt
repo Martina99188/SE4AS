@@ -13,11 +13,11 @@ runnare container influxdb:
 docker run -d --network seas_network --ip 173.20.0.102 -p 8086:8086 -it -v C:\Users\miche\data:/var/lib/influxdb2 -v C:\Users\miche\config:/etc/influxdb2 -e DOCKER_INFLUXDB_INIT_MODE=setup -e DOCKER_INFLUXDB_INIT_USERNAME=admin -e DOCKER_INFLUXDB_INIT_PASSWORD=adminadmin -e DOCKER_INFLUXDB_INIT_ORG=univaq -e DOCKER_INFLUXDB_INIT_BUCKET=seas -e DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=seasinfluxdbtoken --name seas_influxdb influxdb
 
 ip list:
-	- seas_mosquitto: 173.20.0.100 1883
+	- seas_mosquitto: 173.20.0.100 1883 9001
 	- seas_managed_resource: 173.20.0.101
 	- seas_influxdb: 173.20.0.102 8086
 	- seas_monitor: 173.20.0.103
 	- seas_analyzer: 173.20.0.104
-	- seas_planner: 173.20.0.105
-	- seas_executor: 173.20.0.106
+	- seas_planner: 173.20.0.105 5005
+	- seas_executor: 173.20.0.106 5006
 	- seas_grafana: 173.20.0.107 3000

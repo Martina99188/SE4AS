@@ -2,7 +2,6 @@ import requests
 from flask import Flask
 from flask import jsonify
 from flask import request
-from tenacity import retry
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -11,7 +10,7 @@ app.secret_key = 'B;}}S5Cx@->^^"hQT{T,GJ@YI*><17'
 @app.route("/planner/symptoms", methods=["POST"])
 def check_symptoms():
     symptoms = request.json
-    url = 'http://localhost:5006'
+    url = 'http://173.20.0.106:5006'
 
     try:
         for room in symptoms:
@@ -46,7 +45,7 @@ def check_symptoms():
 @app.route("/planner/presence", methods=["POST"])
 def change_mode():
     presence = request.json
-    url = 'http://localhost:5006/mode'
+    url = 'http://173.20.0.106:5006/mode'
     #1 means the room is in normal mode but should be eco mode
 
     #0 means the room is in eco mode but should be in normal mode
@@ -62,4 +61,4 @@ def change_mode():
     return resp
 
 if __name__ == "__main__":
-    app.run(debug=True,host='localhost', port=5005)
+    app.run(debug=True,host='173.20.0.105', port=5005)

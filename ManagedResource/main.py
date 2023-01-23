@@ -7,7 +7,8 @@ from ModeDefinition import ModeDefinition
 def main():
     # MQTT client creation
     client = mqtt.Client("ManagedResource", reconnect_on_failure=True)
-    client.connect("localhost")
+    #client.connect("localhost")
+    client.connect("173.20.0.100")
 
     # room creation
     rooms = []

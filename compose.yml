@@ -30,6 +30,7 @@ services:
           ipv4_address: 173.20.0.102
     ports:
       - "8086:8086"
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -48,6 +49,80 @@ services:
         ipv4_address: 173.20.0.107
     depends_on:
       - seas_influxdb
+
+  seas_managed_resource:
+    image: seas_managed_resource
+    container_name: seas_managed_resource
+    build:
+      context: ./ManagedResource/
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.101
+    depends_on:
+      - seas_mosquitto
+      - seas_influxdb
+  
+  seas_monitor:
+    image: seas_monitor
+    container_name: MAPE_MONITOR
+    build:
+      context: ./Monitor/
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.103
+    depends_on:
+      - seas_mosquitto
+      - seas_influxdb
+  
+  seas_analyzer:
+    image: seas_analyzer
+    container_name: MAPE_ANALYZER
+    build:
+      context: ./Analyzer/
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.104
+    depends_on:
+      - seas_mosquitto
+      - seas_influxdb
+  
+  seas_planner:
+    image: seas_planner
+    container_name: MAPE_PLANNER
+    build:
+      context: ./Planner/
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.105
+    ports:
+      - "5005:5005"
+    depends_on:
+      - seas_mosquitto
+      - seas_influxdb
+
+  seas_executor:
+    image: seas_executor
+    container_name: MAPE_EXECUTOR
+    build:
+      context: ./Executor/
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      seas_network:
+        ipv4_address: 173.20.0.106
+    ports:
+      - "5005:5005"
+    depends_on:
+      - seas_mosquitto
+      - seas_influxdb      
       
 networks:
   seas_network:

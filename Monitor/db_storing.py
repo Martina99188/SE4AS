@@ -1,9 +1,5 @@
 import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
-from datetime import datetime
-
-from tenacity import retry
-
 
 class db_storing:
     @staticmethod
@@ -14,7 +10,7 @@ class db_storing:
         org = "univaq"
         token = "seasinfluxdbtoken"
         #url = "http://localhost:8086/"
-        url = "http://localhost:8086/"
+        url = "http://173.20.0.102:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         write_api = client.write_api(write_options=SYNCHRONOUS)
 

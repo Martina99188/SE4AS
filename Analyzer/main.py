@@ -1,10 +1,8 @@
 import traceback
 from datetime import datetime
 from time import sleep
-
 import numpy
 from tenacity import retry
-
 import db_connector
 import requests
 
@@ -25,7 +23,7 @@ def main():
             if presence != 0:
                 presence_data[room] = presence
 
-        url = 'http://localhost:5005/planner/presence'
+        url = 'http://173.20.0.105:5005/planner/presence'
         x = requests.post(url, json=presence_data)
 
         # dictionary of data are organized in this way {room : {measurement : {time : value}}}
@@ -39,7 +37,7 @@ def main():
             parameters_data[room] = room_values
 
         symptoms = check_parameters_symptoms(parameters_data)
-        url = 'http://localhost:5005/planner/symptoms'
+        url = 'http://173.20.0.105:5005/planner/symptoms'
         x = requests.post(url, json=symptoms)
 
         # blocco dedicato alla profilazione della presenza di persone in casa
