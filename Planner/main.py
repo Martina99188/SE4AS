@@ -10,7 +10,6 @@ app.secret_key = 'B;}}S5Cx@->^^"hQT{T,GJ@YI*><17'
 
 @app.route("/planner/symptoms", methods=["POST"])
 def check_symptoms():
-    # symptoms = '{"bathRoom": {"humidity": -1, "temperature": -1, "light": -1}, "kitchen": {"humidity": 0, "temperature": -1, "light": 1}, "livingRoom": {"humidity": -1, "temperature": -1, "light": 1}}'
     symptoms = request.json
     url = 'http://localhost:5006'
 

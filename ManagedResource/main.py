@@ -12,12 +12,12 @@ def main():
     # room creation
     rooms = []
 
-    #bath_room = Room(roomName="bathRoom",  light=140, temperature=22, humidity=50, movement=0)
-    #rooms.append(bath_room)
-    #kitchen = Room(roomName="kitchen", light=150, temperature=20, humidity=50, movement=0)
-    #rooms.append(kitchen)
-    #bedroom = Room(roomName="bedRoom",  light=140, temperature=22, humidity=50, movement=0)
-    #rooms.append(bedroom)
+    bath_room = Room(roomName="bathRoom",  light=140, temperature=22, humidity=50, movement=0)
+    rooms.append(bath_room)
+    kitchen = Room(roomName="kitchen", light=150, temperature=20, humidity=50, movement=0)
+    rooms.append(kitchen)
+    bedroom = Room(roomName="bedRoom",  light=140, temperature=22, humidity=50, movement=0)
+    rooms.append(bedroom)
     living_room = Room(roomName="livingRoom", light=100, temperature=36, humidity=48, movement=0)
     rooms.append(living_room)
 

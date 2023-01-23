@@ -1,12 +1,9 @@
-import pprint
 import traceback
 from datetime import datetime
-from time import sleep, time
+from time import sleep
 
 import numpy
-import numpy as np
-import urllib3
-from tenacity import retry, stop_after_attempt
+from tenacity import retry
 
 import db_connector
 import requests
@@ -23,7 +20,6 @@ def main():
         for room in rooms:
             timeSlots = check_busy_time_slot(room)
             for timeSlot in timeSlots.items():
-                #print(f'{room} - {timeSlot}')
                 db_connector.DB_Connector.storeTimeSlots(timeSlot, room)
             presence = check_presence(room)
             if presence != 0:
@@ -70,19 +66,14 @@ def check_parameters_symptoms(data):
             if measurement != "movement":
                 target = int(db_connector.DB_Connector.getTargetRoomParameter(measurement=measurement))
                 actual_value = numpy.mean(list(data[room][measurement].values()))
-                #print(f'Measurement: {measurement}, Mean: {actual_value}, Target: {target}+/-{interval}')
 
                 # 2 means to increase the value and set mode to danger
                 # 1 means to increase the value
                 # 0 don't do anything
                 # -1 means to decrease the value
                 # -2 means to decrease the value and set mode to danger
+                # 3 means to deactivate alarm and set mode to eco
 
-                # {
-                #     danger: none
-                #     danger: activate
-                #     danger: deactivate
-                # }
                 print(f'\nMode: {mode}, Measurement: {measurement}, Value: {actual_value}, Target: {target}+/-{interval}')
                 if mode == 'eco' or mode == 'normal':
                     if actual_value > target + interval: #se misura è maggiore del range della mode attuale
@@ -126,26 +117,6 @@ def check_parameters_symptoms(data):
                             values[measurement] = -1
                             print('Simply increase')
 
-                    
-                    
-                
-                
-                # # Se modalita è danger
-                # #
-                # #    Se parametro e' nel range normal
-                # if actual_value < target - interval:
-                #     if mode != 'danger':
-                #         values[measurement] = -1
-                #     else:
-                #         values[measurement] = -2
-                # elif actual_value > target + interval:
-                #     if mode != 'danger':
-                #         values[measurement] = 1
-                #     else:
-                #         values[measurement] = 2
-                # else:
-                #     values[measurement] = 0
-
         rooms[room] = values
     return rooms
 
@@ -181,11 +152,9 @@ def check_busy_time_slot(room):
                     parsed.append(0)
             mean = numpy.mean(parsed)
             if mean >= 0.5:
-                # print(f'{hour}:{quarter[0]} - {hour}:{quarter[1]}')
                 fasce_orarie[f'{hour}:{quarter[0]} - {hour}:{quarter[1]}'] = 1
             else:
                 fasce_orarie[f'{hour}:{quarter[0]} - {hour}:{quarter[1]}'] = 0
-    # print(fasce_orarie)
     return fasce_orarie
 
 def check_presence(room:str):
@@ -214,5 +183,3 @@ if __name__ == "__main__":
     while True:
         main()
         sleep(10)
-
-    #check_presence("livingRoom")
