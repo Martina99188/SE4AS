@@ -1,4 +1,5 @@
 import pprint
+import traceback
 from datetime import datetime
 from time import sleep, time
 
@@ -49,7 +50,7 @@ def main():
 
 
     except Exception as exc:
-        print(exc)
+        traceback.print_exc()
 
 
 
@@ -63,13 +64,13 @@ def check_parameters_symptoms(data):
     ranges = con.getAllRangesForModes()
     for room in data:
         values = {}
-        interval = db_connector.DB_Connector.getRangeRoom(room=room)
+        interval = int(db_connector.DB_Connector.getRangeRoom(room=room))
         mode = con.getModeRoom(room)
         for measurement in data[room]:
             if measurement != "movement":
-                target = db_connector.DB_Connector.getTargetRoomParameter(measurement=measurement)
-                mean_parameter = numpy.mean(list(data[room][measurement].values()))
-                #print(f'Measurement: {measurement}, Mean: {mean_parameter}, target: {target}, interval: {interval}')
+                target = int(db_connector.DB_Connector.getTargetRoomParameter(measurement=measurement))
+                actual_value = numpy.mean(list(data[room][measurement].values()))
+                #print(f'Measurement: {measurement}, Mean: {actual_value}, Target: {target}+/-{interval}')
 
                 # 2 means to increase the value and set mode to danger
                 # 1 means to increase the value
@@ -82,80 +83,62 @@ def check_parameters_symptoms(data):
                 #     danger: activate
                 #     danger: deactivate
                 # }
-                print(f'\nMode: {mode}, Measurement: {measurement}, Value: {mean_parameter}, Target: {target}, Interval: {interval}')
+                print(f'\nMode: {mode}, Measurement: {measurement}, Value: {actual_value}, Target: {target}+/-{interval}')
                 if mode == 'eco' or mode == 'normal':
-                    if mean_parameter > target + interval: #se misura è maggiore del range della mode attuale
-                        if mean_parameter < target + int(ranges['danger']): #se misura è nel range della danger
+                    if actual_value > target + interval: #se misura è maggiore del range della mode attuale
+                        if actual_value < target + int(ranges['danger']): #se misura è nel range della danger
                             values[measurement] = 1
-                            print('No danger, simply decrease')
+                            print('Simply decrease')
                         else:
                             if measurement == 'temperature':
                                 values[measurement] = 2
                                 print('Danger, decrease and set mode to danger')
                             else:
                                 values[measurement] = 1
-                                print('No danger, simply decrease')
-                    elif mean_parameter < target - interval:  # se misura è minore del range della mode attuale
-                        if mean_parameter > target - int(ranges['danger']):  # se misura è nel range della danger
+                                print('Simply decrease')
+                    elif actual_value < target - interval:  # se misura è minore del range della mode attuale
+                        if actual_value > target - int(ranges['danger']):  # se misura è nel range della danger
                             values[measurement] = -1
-                            print('No danger, simply increase')
+                            print('Simply increase')
                         else:
                             if measurement == 'temperature':
                                 values[measurement] = -2
                                 print('Danger, increase and set mode to danger')
                             else:
                                 values[measurement] = -1
-                                print('No danger, simply increase')
+                                print('Simply increase')
                 elif mode == 'danger':
                     if measurement == "temperature":
-                        print(f'\nMode: {mode}, Measurement: {measurement}, Value: {mean_parameter}, Target: {target}, Interval: {interval}, Danger Range: {ranges["danger"]}')
-                        if mean_parameter > target + int(ranges['danger']): #se misura è superiore al range della danger
+                        if actual_value > target + int(ranges['danger']): #se misura è superiore al range della danger
                             print('Danger active, simply decrease')
                             values[measurement] = 1
-                        elif mean_parameter < target - int(ranges['danger']):  # se misura è superiore al range della danger
+                        elif actual_value < target - int(ranges['danger']):  # se misura è superiore al range della danger
                             print('Danger active, simply increase')
                             values[measurement] = -1
-                        elif mean_parameter < target + int(ranges['danger']) and measurement > target - int(ranges['danger']):
+                        elif actual_value < target + int(ranges['danger']) and actual_value > target - int(ranges['danger']):
                             print('No more danger, deactivate alarm and set mode to eco')
                             values[measurement] = 3
                     else:
-                        if mode == 'eco' or mode == 'normal':
-                            if mean_parameter > target + interval:  # se misura è maggiore del range della mode attuale
-                                if mean_parameter < target + int(
-                                        ranges['danger']):  # se misura è nel range della danger
-                                    values[measurement] = 1
-                                    print('No danger, simply decrease')
-                                else:
-                                    if measurement == 'temperature':
-                                        values[measurement] = 2
-                                        print('Danger, decrease and set mode to danger')
-                                    else:
-                                        values[measurement] = 1
-                                        print('No danger, simply decrease')
-                            elif mean_parameter < target - interval:  # se misura è minore del range della mode attuale
-                                if mean_parameter > target - int(
-                                        ranges['danger']):  # se misura è nel range della danger
-                                    values[measurement] = -1
-                                    print('No danger, simply increase')
-                                else:
-                                    if measurement == 'temperature':
-                                        values[measurement] = -2
-                                        print('Danger, increase and set mode to danger')
-                                    else:
-                                        values[measurement] = -1
-                                        print('No danger, simply increase')
+                        if actual_value > target + interval:  # se misura è maggiore del range della mode attuale
+                            values[measurement] = 1
+                            print('Simply decrease')
+                        elif actual_value < target - interval:  # se misura è minore del range della mode attuale
+                            values[measurement] = -1
+                            print('Simply increase')
 
-
-
+                    
+                    
+                
+                
                 # # Se modalita è danger
                 # #
                 # #    Se parametro e' nel range normal
-                # if mean_parameter < target - interval:
+                # if actual_value < target - interval:
                 #     if mode != 'danger':
                 #         values[measurement] = -1
                 #     else:
                 #         values[measurement] = -2
-                # elif mean_parameter > target + interval:
+                # elif actual_value > target + interval:
                 #     if mode != 'danger':
                 #         values[measurement] = 1
                 #     else:

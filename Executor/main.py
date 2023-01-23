@@ -34,6 +34,14 @@ def trip_alarm(room):
     change_mode(room, "danger")
     return resp
 
+@app.route("/<room>/deactivate/alarm")
+def deactivate_alarm(room):
+    client.publish(f'alarm/{room}/deactivate', '')
+    resp = jsonify(success=True, error="none")
+    resp.status_code = 200
+    change_mode(room, "echo")
+    return resp
+
 
 @app.route("/mode/<room>/<mode>")
 def change_mode(room, mode):

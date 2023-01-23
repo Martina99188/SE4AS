@@ -39,7 +39,9 @@ class AlarmActuator:
     def activeAlarm(self):
         #  implement here listener from executor
         self.room.alarm.isActive = True
+        print('ALARM ACTIVATED')
 
     def disableAlarm(self):
         #  implement here listener from executor
         self.room.alarm.isActive = False
+        print('ALARM DEACTIVATED')

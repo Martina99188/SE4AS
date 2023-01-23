@@ -33,7 +33,10 @@ def check_symptoms():
                     alarm_url = f'{url}/{room}/activate/alarm'
                     x = requests.get(alarm_url)
                     print(f'{measurement} symptom: {symptoms[room][measurement]}. {measurement} should increase. Alarm should be activated.')
-
+                elif symptoms[room][measurement] == 3:
+                    alarm_url = f'{url}/{room}/deactivate/alarm'
+                    x = requests.get(alarm_url)
+                    print(f'{measurement} symptom: {symptoms[room][measurement]}. Alarm should be deactivated.')
     except Exception as exc:
         print(exc)
 
