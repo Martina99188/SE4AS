@@ -82,7 +82,7 @@ def check_parameters_symptoms(data):
                 #     danger: activate
                 #     danger: deactivate
                 # }
-                print(f'\nMode: {mode}, Measurement: {measurement}, Value: {mean_parameter}, Target: {target}, Interval: {interval}, Danger Range: {ranges["danger"]}')
+                print(f'\nMode: {mode}, Measurement: {measurement}, Value: {mean_parameter}, Target: {target}, Interval: {interval}')
                 if mode == 'eco' or mode == 'normal':
                     if mean_parameter > target + interval: #se misura è maggiore del range della mode attuale
                         if mean_parameter < target + int(ranges['danger']): #se misura è nel range della danger
@@ -108,7 +108,7 @@ def check_parameters_symptoms(data):
                                 print('No danger, simply increase')
                 elif mode == 'danger':
                     if measurement == "temperature":
-                        print(f'\nMode: {mode}, Measurement: {measurement}, Target: {target}, Interval: {interval}, Danger Range: {ranges["danger"]}')
+                        print(f'\nMode: {mode}, Measurement: {measurement}, Value: {mean_parameter}, Target: {target}, Interval: {interval}, Danger Range: {ranges["danger"]}')
                         if mean_parameter > target + int(ranges['danger']): #se misura è superiore al range della danger
                             print('Danger active, simply decrease')
                             values[measurement] = 1
