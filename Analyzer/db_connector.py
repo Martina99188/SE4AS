@@ -52,7 +52,6 @@ class DB_Connector:
     def getPresenceDataFromDB(room: str):
         # influxdb connection
         org = "univaq"
-        # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
         token = "seasinfluxdbtoken"
         url = "http://173.20.0.102:8086/"
         #url = "http://localhost:8086/"

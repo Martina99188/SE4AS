@@ -46,14 +46,14 @@ def check_symptoms():
 def change_mode():
     presence = request.json
     url = 'http://173.20.0.106:5006/mode'
-    #1 means the room is in normal mode but should be eco mode
+    #1 means the room is in normal mode but should be eco-mode
 
-    #0 means the room is in eco mode but should be in normal mode
+    #0 means the room is in eco-mode but should be in normal mode
 
     for room in presence:
-        if presence[room] == 1: #room is in normal mode but should be eco mode
+        if presence[room] == 1: #room is in normal mode but should be eco-mode
             x = requests.get(f'{url}/{room}/eco')
-        if presence[room] == 0: #room is in eco mode but should be in normal mode
+        if presence[room] == 0: #room is in eco-mode but should be in normal mode
             x = requests.get(f'{url}/{room}/normal')
 
     resp = jsonify(success=True, error="none")
