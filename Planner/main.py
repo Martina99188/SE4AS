@@ -61,4 +61,4 @@ def change_mode():
     return resp
 
 if __name__ == "__main__":
-    app.run(debug=True,host='173.20.0.105', port=5005)
+    app.run(debug=True,host='173.20.0.105', port=5007)

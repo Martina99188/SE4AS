@@ -103,7 +103,7 @@ services:
       seas_network:
         ipv4_address: 173.20.0.105
     ports:
-      - "5005:5005"
+      - "5007:5007"
     depends_on:
       - seas_mosquitto
       - seas_influxdb
@@ -119,7 +119,7 @@ services:
       seas_network:
         ipv4_address: 173.20.0.106
     ports:
-      - "5005:5005"
+      - "5006:5006"
     depends_on:
       - seas_mosquitto
       - seas_influxdb      

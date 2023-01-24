@@ -18,6 +18,6 @@ ip list:
 	- seas_influxdb: 173.20.0.102 8086
 	- seas_monitor: 173.20.0.103
 	- seas_analyzer: 173.20.0.104
-	- seas_planner: 173.20.0.105 5005
+	- seas_planner: 173.20.0.105 5007
 	- seas_executor: 173.20.0.106 5006
 	- seas_grafana: 173.20.0.107 3000
