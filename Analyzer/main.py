@@ -6,7 +6,7 @@ from tenacity import retry
 import db_connector
 import requests
 
-@retry()
+#@retry()
 def main():
     try:
         con = db_connector.DB_Connector()
@@ -23,8 +23,8 @@ def main():
             if presence != 0:
                 presence_data[room] = presence
 
-        #url = 'http://localhost:5007/planner/presence'
-        url = 'http://173.20.0.105:5007/planner/presence'
+        url = 'http://localhost:5007/planner/presence'
+        #url = 'http://173.20.0.105:5007/planner/presence'
         x = requests.post(url, json=presence_data)
 
         # dictionary of data are organized in this way {room : {measurement : {time : value}}}
@@ -38,8 +38,8 @@ def main():
             parameters_data[room] = room_values
 
         symptoms = check_parameters_symptoms(parameters_data)
-        #url = 'http://localhost:5007/planner/symptoms'
-        url = 'http://173.20.0.105:5007/planner/symptoms'
+        url = 'http://localhost:5007/planner/symptoms'
+        #url = 'http://173.20.0.105:5007/planner/symptoms'
         x = requests.post(url, json=symptoms)
 
     except Exception as exc:
@@ -148,6 +148,8 @@ def check_busy_time_slot(room):
                 else:
                     parsed.append(0)
             mean = numpy.mean(parsed)
+            if mean != 0.0:
+                print(mean)
             if mean >= 0.5:
                 fasce_orarie[f'{hour}:{quarter[0]} - {hour}:{quarter[1]}'] = 1
             else:
@@ -168,13 +170,17 @@ def check_presence(room:str):
     for quarter in [('00', '14'), ('15', '29'), ('30', '44'), ('45', '59')]:
         if current_time[1] >= quarter[0] and current_time[1] <= quarter[1]:
 
-            time_slot = f'{current_time[0]}:{quarter[0]} - {current_time[0]}:{quarter[1]}'
+            #time_slot = f'{current_time[0]}:{quarter[0]} - {current_time[0]}:{quarter[1]}'
 
-            value = con.get_room_time_slots(room, time_slot)
+            #value = con.get_room_time_slots(room, time_slot)
+            value = con.get_room_presence(room)
+            print(value)
 
             if mode == 'normal' and value == 0:
+                print('Set mode to eco')
                 return 1
             if mode == 'eco' and value == 1:
+                print('Set mode to normal')
                 return 2
 
             return 0

@@ -50,19 +50,19 @@ services:
     depends_on:
       - seas_influxdb
 
-  seas_managed_resource:
-    image: seas_managed_resource
-    container_name: seas_managed_resource
-    build:
-      context: ./ManagedResource/
-      dockerfile: Dockerfile
-    restart: always
-    networks:
-      seas_network:
-        ipv4_address: 173.20.0.101
-    depends_on:
-      - seas_mosquitto
-      - seas_influxdb
+#  seas_managed_resource:
+#    image: seas_managed_resource
+#    container_name: seas_managed_resource
+#    build:
+#      context: ./ManagedResource/
+#      dockerfile: Dockerfile
+#    restart: always
+#    networks:
+#      seas_network:
+#        ipv4_address: 173.20.0.101
+#    depends_on:
+#      - seas_mosquitto
+#      - seas_influxdb
   
   seas_monitor:
     image: seas_monitor

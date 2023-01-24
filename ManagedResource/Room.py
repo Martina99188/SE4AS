@@ -35,7 +35,7 @@ class Room:
              self.light = self.light + randint(-1, 1)
              self.temperature = self.temperature + randint(-1, 1)
              self.humidity = self.humidity + randint(-1, 1)
-        self.movement = 1
+        self.movement = 0
 
         client.publish(f"indoor/{self.roomName}/light", self.light)
         client.publish(f"indoor/{self.roomName}/temperature", self.temperature)
