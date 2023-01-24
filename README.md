@@ -13,7 +13,7 @@ In particular, the trend of the following factors was simulated: internal temper
 Furthermore, the behavior following the activation of the various actuators which will modify the environmental situation inside the house, in relation to the objectives to be achieved, was simulated. In particular, the following have been simulated: an air conditioner (capable of increasing and decreasing the temperature), a dehumidifier (capable of increasing and decreasing the percentage of humidity), a sound and light alarm (capable of activating in certain situations), and intelligent lighting (able to adjust the brightness inside the house).
 The advantages of building such a system lie in the possibility of automating human behavior, to avoid errors resulting from distractions or negligence.
 
-Chapter 2 describes the objectives to be achieved using this application. In Chapters 3 and 4, on the other hand, the technologies used and the functions of the system are respectively described. Chapter 5 describes the modalities that the system can assume. In Chapters 6 and 7 the implementation of the MAPE-K loop and of the various components of our system were respectively described. Chapter 8 describes the implementation of the obtained graphs and tables in Grafana. Chapter 9 defines the GUI. Finally, the conclusions and instructions are presented in chapters 10 and 11.
+Chapter 2 describes the objectives to be achieved using this application. In Chapters 3 and 4, on the other hand, the technologies used and the functions of the system are respectively described. Chapter 5 describes the modalities that the system can assume. In Chapters 6 and 7 the implementation of the MAPE-K loop and of the various components of our system were respectively described. Chapter 8 describes the implementation of the obtained graphs and tables in Grafana. Finally, the conclusions and instructions are presented in chapters 9 and 10.
 
 
 ## Technology Used
@@ -34,10 +34,6 @@ Our published topics include:
 •	indoor/nameRoom/movement
 
 Where nameRoom can be: livingRoom, bathRoom, kitchen, bedRoom.
-
-+ Node-red 
-
-Node-RED We used Node-RED to process the output data from MQTT. We also created the data flow through the use of Node-RED.
  
 + InfluxDB 
 
