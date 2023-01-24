@@ -23,8 +23,8 @@ def main():
             if presence != 0:
                 presence_data[room] = presence
 
-        url = 'http://localhost:5007/planner/presence'
-        #url = 'http://173.20.0.105:5007/planner/presence'
+        #url = 'http://localhost:5007/planner/presence'
+        url = 'http://173.20.0.105:5007/planner/presence'
         x = requests.post(url, json=presence_data)
 
         # dictionary of data are organized in this way {room : {measurement : {time : value}}}
@@ -38,12 +38,9 @@ def main():
             parameters_data[room] = room_values
 
         symptoms = check_parameters_symptoms(parameters_data)
-        url = 'http://localhost:5007/planner/symptoms'
-        #url = 'http://173.20.0.105:5007/planner/symptoms'
+        #url = 'http://localhost:5007/planner/symptoms'
+        url = 'http://173.20.0.105:5007/planner/symptoms'
         x = requests.post(url, json=symptoms)
-
-        # blocco dedicato alla profilazione della presenza di persone in casa
-
 
     except Exception as exc:
         traceback.print_exc()
@@ -162,6 +159,12 @@ def check_presence(room:str):
     mode = con.getModeRoom(room)
     utcnow = datetime.utcnow()
     current_time = utcnow.strftime("%H:%M").split(":")
+
+    if current_time[0] != "00":
+        current_time[0] = str(int(current_time[0]))
+    else:
+        current_time[0] = "0"
+
     for quarter in [('00', '14'), ('15', '29'), ('30', '44'), ('45', '59')]:
         if current_time[1] >= quarter[0] and current_time[1] <= quarter[1]:
 
@@ -181,7 +184,5 @@ def check_presence(room:str):
 if __name__ == "__main__":
 
     while True:
-        print("prima del main")
         main()
-        print("main eseguito")
-        sleep(5)
+        sleep(10)

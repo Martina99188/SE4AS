@@ -12,8 +12,8 @@ class AlarmActuator:
         thread.start()
 
     def initialize_mqtt(self):
-        #self.client.connect("localhost", 1883)
-        self.client.connect("173.20.0.100", 1883)
+        self.client.connect("localhost", 1883)
+        #self.client.connect("173.20.0.100", 1883)
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.client.loop_forever()
@@ -35,11 +35,9 @@ class AlarmActuator:
                 self.disableAlarm()
 
     def activeAlarm(self):
-        #  implement here listener from executor
         self.room.alarm.isActive = True
         print('ALARM ACTIVATED')
 
     def disableAlarm(self):
-        #  implement here listener from executor
         self.room.alarm.isActive = False
         print('ALARM DEACTIVATED')

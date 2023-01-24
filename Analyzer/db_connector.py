@@ -9,8 +9,8 @@ class DB_Connector:
 
         self.org = "univaq"
         self.token = "seasinfluxdbtoken"
-        #self.url = "http://173.20.0.102:8086/"
-        self.url = "http://localhost:8086/"
+        self.url = "http://173.20.0.102:8086/"
+        #self.url = "http://localhost:8086/"
         self.connect_to_influx()
 
     @retry()
@@ -54,8 +54,8 @@ class DB_Connector:
         org = "univaq"
         # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
         token = "seasinfluxdbtoken"
-        #url = "http://173.20.0.102:8086/"
-        url = "http://localhost:8086/"
+        url = "http://173.20.0.102:8086/"
+        #url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
         query = f'from(bucket: "seas")  |> range(start: -7d)  ' \
@@ -72,10 +72,9 @@ class DB_Connector:
     def getTargetRoomParameter(measurement : str):
         # influxdb connection
         org = "univaq"
-        # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
         token = "seasinfluxdbtoken"
-        #url = "http://173.20.0.102:8086/"
-        url = "http://localhost:8086/"
+        url = "http://173.20.0.102:8086/"
+        #url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
         query = f'from(bucket: "seas")  |> range(start: 2023-01-01T15:00:00Z)  ' \
@@ -90,10 +89,9 @@ class DB_Connector:
     def getRangeRoom(room : str):
         # influxdb connection
         org = "univaq"
-        # token = "MBTON6j-f1cTTUVUOwu8BbP-AvsDpYBTJob6pxSkxFfKFnNYj_QqrlolasHOvOtxpXBAlgRAseNgvvxpZ5NAMA=="
         token = "seasinfluxdbtoken"
-        #url = "http://173.20.0.102:8086/"
-        url = "http://localhost:8086/"
+        url = "http://173.20.0.102:8086/"
+        #url = "http://localhost:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         query_api = client.query_api()
         query = f'from(bucket: "seas")  |> range(start: 2023-01-01T15:00:00Z)  ' \
@@ -142,8 +140,8 @@ class DB_Connector:
         bucket = "seas"
         org = "univaq"
         token = "seasinfluxdbtoken"
-        url = "http://localhost:8086/"
-        #url = "http://173.20.0.102:8086/"
+        #url = "http://localhost:8086/"
+        url = "http://173.20.0.102:8086/"
         client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
         write_api = client.write_api(write_options=SYNCHRONOUS)
 
@@ -156,7 +154,7 @@ class DB_Connector:
         write_api.write(bucket=bucket, org=org, record=p)
 
     #@retry()
-    def get_room_time_slots(self, room : str, timeslot : str):
+    def get_room_time_slots( self, room : str, timeslot : str):
         query_api = self.client.query_api()
         query = f'from(bucket: "seas")  |> range(start: -7d)  ' \
                 f'|> filter(fn: (r) => r["_measurement"] == "timeSlot")  ' \
@@ -165,5 +163,4 @@ class DB_Connector:
                 f'|> last(column: "_field")  |> yield(name: "mean")'
         result = query_api.query(org=self.org, query=query)
         parsed = json.loads(result.to_json())
-        print(parsed[0]['_value'])
-        #return parsed[0]['_value']
+        return parsed[0]['_value']

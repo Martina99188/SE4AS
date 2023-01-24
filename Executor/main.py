@@ -38,7 +38,7 @@ def deactivate_alarm(room):
     client.publish(f'alarm/{room}/deactivate', '')
     resp = jsonify(success=True, error="none")
     resp.status_code = 200
-    change_mode(room, "echo")
+    change_mode(room, "eco")
     return resp
 
 

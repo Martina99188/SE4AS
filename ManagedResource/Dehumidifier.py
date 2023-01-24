@@ -11,8 +11,8 @@ class Dehumidifier:
         thread.start()
 
     def initialize_mqtt(self):
-        #self.client.connect("localhost", 1883)
-        self.client.connect("173.20.0.100", 1883)
+        self.client.connect("localhost", 1883)
+        #self.client.connect("173.20.0.100", 1883)
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.client.loop_forever()
@@ -34,9 +34,7 @@ class Dehumidifier:
                 self.decreaseHumidity()
 
     def increaseHumidity(self):
-        # implement here listener from executor
         self.room.humidity = self.room.humidity + 1
 
     def decreaseHumidity(self):
-        # implement here listener from executor
         self.room.humidity = self.room.humidity - 1
