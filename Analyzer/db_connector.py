@@ -173,7 +173,7 @@ class DB_Connector:
                     |> filter(fn: (r) => r["room"] == "{room}") \
                     |> sort(columns: ["_time"], desc: true) \
                     |> first()'
-        print(query)
+        #print(query)
         result = query_api.query(org=self.org, query=query)
         parsed = json.loads(result.to_json())
         return parsed[0]['_value']

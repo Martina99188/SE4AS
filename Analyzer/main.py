@@ -174,7 +174,7 @@ def check_presence(room:str):
 
             #value = con.get_room_time_slots(room, time_slot)
             value = con.get_room_presence(room)
-            print(value)
+            #print(value)
 
             if mode == 'normal' and value == 0:
                 print('Set mode to eco')
