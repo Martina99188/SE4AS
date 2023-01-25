@@ -71,7 +71,7 @@ def check_parameters_symptoms(data):
                 # -2 means to decrease the value and set mode to danger
                 # 3 means to deactivate alarm and set mode to eco
 
-                print(f'\nMode: {mode}, Measurement: {measurement}, Value: {actual_value}, Target: {target}+/-{interval}')
+                print(f'\nRoom: {room}, Mode: {mode}, Measurement: {measurement}, Value: {actual_value}, Target: {target}+/-{interval}')
                 if mode == 'eco' or mode == 'normal':
                     if actual_value > target + interval: #se misura è maggiore del range della mode attuale
                         if actual_value < target + int(ranges['danger']): #se misura è nel range della danger
@@ -148,8 +148,6 @@ def check_busy_time_slot(room):
                 else:
                     parsed.append(0)
             mean = numpy.mean(parsed)
-            if mean != 0.0:
-                print(mean)
             if mean >= 0.5:
                 fasce_orarie[f'{hour}:{quarter[0]} - {hour}:{quarter[1]}'] = 1
             else:
@@ -177,10 +175,10 @@ def check_presence(room:str):
             #print(value)
 
             if mode == 'normal' and value == 0:
-                print('Set mode to eco')
+                print(f'{room}: set mode to eco')
                 return 1
             if mode == 'eco' and value == 1:
-                print('Set mode to normal')
+                print(f'{room}: set mode to normal')
                 return 2
 
             return 0
