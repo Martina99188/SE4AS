@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 services:
   seas_mosquitto:
     image: eclipse-mosquitto:latest
@@ -10,8 +10,8 @@ services:
       seas_network:
         ipv4_address: 173.20.0.100
     ports:
-      - "1883:1883"
-      - "9001:9001"
+      - '1883:1883'
+      - '9001:9001'
 
   seas_influxdb:
     image: influxdb:latest
@@ -29,7 +29,7 @@ services:
        seas_network:
           ipv4_address: 173.20.0.102
     ports:
-      - "8086:8086"
+      - '8086:8086'
 
   grafana:
     image: grafana/grafana:latest
@@ -51,11 +51,12 @@ services:
       - seas_influxdb
 
   seas_managed_resource:
-    image: micheleintrevado/seas_managed_resource
+    #image: micheleintrevado/seas_managed_resource
+    image: seas_managed_resource
     container_name: seas_managed_resource
-    #build:
-    #  context: ./ManagedResource/
-    #  dockerfile: Dockerfile
+    build:
+      context: ./ManagedResource/
+      dockerfile: Dockerfile
     restart: always
     networks:
       seas_network:
@@ -65,11 +66,12 @@ services:
       - seas_influxdb
   
   seas_monitor:
-    image: micheleintrevado/seas_monitor
+    #image: micheleintrevado/seas_monitor
+    image: seas_monitor
     container_name: MAPE_MONITOR
-    #build:
-    #  context: ./Monitor/
-    #  dockerfile: Dockerfile
+    build:
+      context: ./Monitor/
+      dockerfile: Dockerfile
     restart: always
     networks:
       seas_network:
@@ -79,11 +81,12 @@ services:
       - seas_influxdb
   
   seas_analyzer:
-    image: micheleintrevado/seas_analyzer
+    #image: micheleintrevado/seas_analyzer
+    image: seas_analyzer
     container_name: MAPE_ANALYZER
-    #build:
-    #  context: ./Analyzer/
-    #  dockerfile: Dockerfile
+    build:
+      context: ./Analyzer/
+      dockerfile: Dockerfile
     restart: always
     networks:
       seas_network:
@@ -93,33 +96,35 @@ services:
       - seas_influxdb
   
   seas_planner:
-    image: micheleintrevado/seas_planner
+    #image: micheleintrevado/seas_planner
+    image: seas_planner
     container_name: MAPE_PLANNER
-    #build:
-    #  context: ./Planner/
-    #  dockerfile: Dockerfile
+    build:
+      context: ./Planner/
+      dockerfile: Dockerfile
     restart: always
     networks:
       seas_network:
         ipv4_address: 173.20.0.105
     ports:
-      - "5007:5007"
+      - '5007:5007'
     depends_on:
       - seas_mosquitto
       - seas_influxdb
 
   seas_executor:
-    image: micheleintrevado/seas_executor
+    #image: micheleintrevado/seas_executor
+    image: seas_executor
     container_name: MAPE_EXECUTOR
-    #build:
-    #  context: ./Executor/
-    #  dockerfile: Dockerfile
+    build:
+      context: ./Executor/
+      dockerfile: Dockerfile
     restart: always
     networks:
       seas_network:
         ipv4_address: 173.20.0.106
     ports:
-      - "5006:5006"
+      - '5006:5006'
     depends_on:
       - seas_mosquitto
       - seas_influxdb      
@@ -128,4 +133,4 @@ networks:
   seas_network:
     ipam:
       config:
-        - subnet: "173.20.0.0/16"
+        - subnet: '173.20.0.0/16'
