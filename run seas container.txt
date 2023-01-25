@@ -21,3 +21,7 @@ ip list:
 	- seas_planner: 173.20.0.105 5007
 	- seas_executor: 173.20.0.106 5006
 	- seas_grafana: 173.20.0.107 3000
+
+push on docker hub:
+docker tag imagename micheleintrevado/imagename
+docker push micheleintrevado/imagename
