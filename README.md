@@ -45,6 +45,8 @@ We used Grafana to visualize and understand the data. The main benefit of Grafan
  
 The MQTT messaging protocols have been used to exchange information between the system and InfluxDB. While Grafana was mainly used as a graphical interface and as a tool for interacting with the system.
 
+## System Architecture
+![https://github.com/Martina99188/SE4AS/](https://github.com/Martina99188/SE4AS/blob/main/ArchitectureSE4AS.png)
 
 ## MAPE-K Loop Implementation
 
