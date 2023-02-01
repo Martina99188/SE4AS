@@ -12,29 +12,42 @@ def check_symptoms():
     symptoms = request.json
     url = 'http://173.20.0.106:5006'
 
+    symptoms_map = {
+        'over': 1,
+        'under': -1,
+        'over_danger': 2,
+        'under_danger': -2,
+        'deactivate_danger': 3
+    }
     try:
         for room in symptoms:
             for measurement in symptoms[room]:
                 print(f'\nRoom: {room}, Measurement: {measurement}, Condition: {symptoms[room][measurement]}')
                 new_url = f'{url}/{room}/{measurement}'
-                if symptoms[room][measurement] == 1:
+
+                if symptoms[room][measurement] == symptoms_map['over']:
                     x = requests.get(f'{new_url}/down')
                     print(f'{measurement} symptom: {symptoms[room][measurement]}. {measurement} should decrease.')
-                elif symptoms[room][measurement] == -1:
+
+                elif symptoms[room][measurement] == symptoms_map['under']:
                     x = requests.get(f'{new_url}/up')
                     print(f'{measurement} symptom: {symptoms[room][measurement]}. {measurement} should increase.')
-                elif symptoms[room][measurement] == 2 :
+
+                elif symptoms[room][measurement] == symptoms_map['over_danger']:
                     alarm_url = f'{url}/{room}/activate/alarm'
                     x = requests.get(alarm_url)
                     print(f'{measurement} symptom: {symptoms[room][measurement]}. {measurement} should decrease. Alarm should be activated.')
-                elif symptoms[room][measurement] == -2:
+
+                elif symptoms[room][measurement] == symptoms_map['under_danger']:
                     alarm_url = f'{url}/{room}/activate/alarm'
                     x = requests.get(alarm_url)
                     print(f'{measurement} symptom: {symptoms[room][measurement]}. {measurement} should increase. Alarm should be activated.')
-                elif symptoms[room][measurement] == 3:
+
+                elif symptoms[room][measurement] == symptoms_map['deactivate_danger']:
                     alarm_url = f'{url}/{room}/deactivate/alarm'
                     x = requests.get(alarm_url)
                     print(f'{measurement} symptom: {symptoms[room][measurement]}. Alarm should be deactivated.')
+
     except Exception as exc:
         print(exc)
 
