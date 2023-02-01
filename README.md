@@ -76,6 +76,7 @@ Component that saves data, such as the days and time slots in which the house is
 
 
 ## Instructions to use the system
-+ git clone https://github.com/Martina99188/SE4AS.
-+ In the cmd of the directory run -> docker compose up.
++ git clone https://github.com/Martina99188/SE4AS.git. 
++ In the cmd of the directory run -> docker compose up. 
 + Only at the first running you need to access Grafana (admin:admin) (localhost:3000).
+
