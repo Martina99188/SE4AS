@@ -16,57 +16,6 @@ class ModeDefinition:
         write_api = client.write_api(write_options=SYNCHRONOUS)
         query_api = client.query_api()
 
-
-        # DEFINITION OF TARGET VALUE INSIDE THE KNOWLEDGE
-
-        # temperature target
-        measurement = "target"
-        field = "temperature"
-        value = "20"
-        p = influxdb_client.Point(measurement).field(field, int(value))
-        write_api.write(bucket=bucket, org=org, record=p)
-
-        # light target
-        measurement = "target"
-        field = "light"
-        value = "180"
-        p = influxdb_client.Point(measurement).field(field, int(value))
-        write_api.write(bucket=bucket, org=org, record=p)
-
-        # humidity target
-        measurement = "target"
-        field = "humidity"
-        value = "50"
-        p = influxdb_client.Point(measurement).field(field, int(value))
-        write_api.write(bucket=bucket, org=org, record=p)
-
-
-        # DEFINITION OF THE MODES INSIDE THE KNOWLEDGE
-
-        # eco-mode definition with range
-        measurement = "mode"
-        tag = "eco"
-        field = "range"
-        value = "5"
-        p = influxdb_client.Point(measurement).tag("name", tag).field(field, int(value))
-        write_api.write(bucket=bucket, org=org, record=p)
-
-        # normal-mode definition with range
-        measurement = "mode"
-        tag = "normal"
-        field = "range"
-        value = "1"
-        p = influxdb_client.Point(measurement).tag("name", tag).field(field, int(value))
-        write_api.write(bucket=bucket, org=org, record=p)
-
-        # danger-mode definition with range
-        measurement = "mode"
-        tag = "danger"
-        field = "range"
-        value = "15"
-        p = influxdb_client.Point(measurement).tag("name", tag).field(field, int(value))
-        write_api.write(bucket=bucket, org=org, record=p)
-
         # mode assignment to the rooms
         for room in rooms:
             measurement = "indoor"
