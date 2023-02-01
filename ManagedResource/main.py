@@ -22,12 +22,12 @@ def main():
     living_room = Room(roomName="livingRoom", light=180, temperature=27, humidity=48, movement=0)
     rooms.append(living_room)
 
-    # mode definition inside the knowledge and mode assignment to the rooms
-    # try:
-    #     #modes = ModeDefinition()
-    #     #modes.storeModes(rooms)
-    # except tenacity.RetryError as e:
-    #     print("Max retries exceeded")
+    #mode definition inside the knowledge and mode assignment to the rooms
+    try:
+        modes = ModeDefinition()
+        modes.storeModes(rooms)
+    except tenacity.RetryError as e:
+        print("Max retries exceeded")
 
 
     while True:
